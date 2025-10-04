@@ -2,51 +2,417 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>JS - Assignment</title>
     <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    #todoList {
-      list-style-type: none;
-      padding: 0;
-    }
-    #todoList li {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-    .completed {
-      text-decoration: line-through;
-      color: gray;
-    }
-  </style>
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffc2e0 0%, #ffd6f0 50%, #e8d5ff 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ดอกไม้ตกแต่ง */
+        body::before,
+        body::after {
+            content: '🌸';
+            position: fixed;
+            font-size: 100px;
+            opacity: 0.15;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::before {
+            top: 10%;
+            left: -20px;
+        }
+
+        body::after {
+            content: '🌺';
+            bottom: 10%;
+            right: -20px;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* พื้นหลังส่วนเนื้อหา */
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255,182,217,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ไอคอนตกแต่งมุมบน */
+        .content::before {
+            content: '✨';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ปุ่ม Back */
+        .back-btn {
+            background: #ff9ec9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #ff85bb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,158,201,0.3);
+        }
+
+        /* หัวข้อ */
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #ff9ec9;
+            padding-bottom: 10px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        h1::before {
+            content: '💖';
+            position: absolute;
+            left: 0;
+            font-size: 28px;
+        }
+
+        h3 {
+            color: #555;
+        }
+
+        /* รูปภาพ */
+        img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* รายการ */
+        ul {
+            background: #fff0f8;
+            padding: 20px 40px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9ec9;
+        }
+
+        li {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        /* ส่วน Input และปุ่ม */
+        .input-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff0f8;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 2px dashed #ffc2e0;
+            position: relative;
+        }
+
+        .input-section::after {
+            content: '🎀';
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            font-size: 30px;
+        }
+
+        /* ช่อง Input */
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ffc2e0;
+            border-radius: 8px;
+            font-size: 16px;
+            flex: 1;
+            min-width: 250px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff9ec9;
+            box-shadow: 0 0 0 3px rgba(255,158,201,0.2);
+        }
+
+        /* ปุ่มต่างๆ */
+        input[type="button"],
+        button.add-btn,
+        button.clear-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* ปุ่ม Add */
+        .add-btn {
+            background: #ff9ec9;
+        }
+
+        .add-btn:hover {
+            background: #ff85bb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,158,201,0.4);
+        }
+
+        /* ปุ่ม Clear All */
+        .clear-btn {
+            background: #d5a8ff;
+        }
+
+        .clear-btn:hover {
+            background: #c58fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(213,168,255,0.4);
+        }
+
+        /* รายการ To-Do */
+        .todo-container {
+            background: #fff5fb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 200px;
+            border: 2px solid #ffc2e0;
+            position: relative;
+        }
+
+        .todo-container::before {
+            content: '💝';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 25px;
+            opacity: 0.7;
+        }
+
+        #todoList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #todoList li {
+            background: white;
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            border: 2px solid #ffe5f4;
+            box-shadow: 0 2px 4px rgba(255,158,201,0.1);
+        }
+
+        #todoList li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(255,158,201,0.2);
+        }
+
+        /* Checkbox */
+        #todoList input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #ff9ec9;
+        }
+
+        /* ข้อความที่ทำเสร็จ */
+        .completed-text {
+            text-decoration: line-through;
+            color: #999;
+            opacity: 0.7;
+        }
+
+        .todo-text {
+            flex: 1;
+            transition: all 0.3s;
+        }
+
+        /* ข้อความว่าง */
+        .empty-message {
+            text-align: center;
+            color: #ff9ec9;
+            font-style: italic;
+            padding: 40px 20px;
+            font-size: 18px;
+        }
+
+        .empty-message::before {
+            content: '📝';
+            display: block;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="content">
+        <button class="back-btn" onclick="window.history.back();">Back</button>
+        
+        <h1>Assignment</h1>
 
-    <button onclick="window.history.back();">Back</button>
-    
-    <h1>Assignment</h1>
+        <h3>Create the simple to-do list with UI and functions below</h3>
+        <img src="./../images/assignment-todo.png">
 
-    <h3>Create the simple to-do list with UI and functions below
-    </h3>
-    <img src="./../images/assignment-todo.png">
-    </p>
-    <ul>
-        <li>One input text for user to input the todo information (task)
-        </li>
-        <li>'Add' button: to add new item with text from input. Once new item added, clear input text.
-        </li>
-        <li>Once checkbox mark as checked, the detail of to-do item will be strikethrough
-        </li>
-        <li>
-            'Clear all todos' button: to clear all todo items from list
-        </li>
-    </ul>
+        <ul>
+            <li>One input text for user to input the todo information (task)</li>
+            <li>'Add' button: to add new item with text from input. Once new item added, clear input text.</li>
+            <li>Once checkbox mark as checked, the detail of to-do item will be strikethrough</li>
+            <li>'Clear all todos' button: to clear all todo items from list</li>
+        </ul>
 
+        <h3>Your solution for assignment</h3>
 
-    <h3>Your solution for assignment</h3>
+        <div class="input-section">
+            <input type="text" id="todoInput" placeholder="Enter new task">
+            <button class="add-btn" onclick="addTodo()">Add</button>
+            <button class="clear-btn" onclick="clearAllTodos()">Clear all todos</button>
+        </div>
 
+        <div class="todo-container">
+            <ul id="todoList">
+                <!-- รายการ To-Do จะแสดงที่นี่ -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชัน: เพิ่ม To-Do ใหม่
+        function addTodo() {
+            // ดึงค่าจากช่อง input
+            const input = document.getElementById('todoInput');
+            const todoText = input.value.trim();
+            
+            // ตรวจสอบว่ากรอกข้อมูลหรือไม่
+            if (todoText === '') {
+                alert('กรุณากรอกรายการที่ต้องทำ! 📝');
+                return;
+            }
+            
+            // หา ul ที่จะใส่ todo
+            const todoList = document.getElementById('todoList');
+            
+            // ลบข้อความว่างถ้ามี
+            if (todoList.querySelector('.empty-message')) {
+                todoList.innerHTML = '';
+            }
+            
+            // สร้าง li (รายการ)
+            const li = document.createElement('li');
+            
+            // สร้าง checkbox
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.onclick = function() {
+                toggleComplete(this);
+            };
+            
+            // สร้าง span สำหรับข้อความ
+            const span = document.createElement('span');
+            span.className = 'todo-text';
+            span.textContent = todoText;
+            
+            // ใส่ checkbox และข้อความเข้าไปใน li
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            
+            // ใส่ li เข้าไปใน ul
+            todoList.appendChild(li);
+            
+            // ล้างช่อง input
+            input.value = '';
+            input.focus();
+        }
+        
+        // ฟังก์ชัน: สลับสถานะทำเสร็จ (ขีดฆ่า)
+        function toggleComplete(checkbox) {
+            // หา span ที่อยู่ถัดจาก checkbox
+            const span = checkbox.nextElementSibling;
+            
+            // ถ้า checkbox ถูกเช็ค = ทำเสร็จ
+            if (checkbox.checked) {
+                span.classList.add('completed-text');
+            } else {
+                span.classList.remove('completed-text');
+            }
+        }
+        
+        // ฟังก์ชัน: ลบ To-Do ทั้งหมด
+        function clearAllTodos() {
+            const todoList = document.getElementById('todoList');
+            
+            // ตรวจสอบว่ามีรายการหรือไม่
+            if (todoList.children.length === 0 || todoList.querySelector('.empty-message')) {
+                alert('ไม่มีรายการที่จะลบ! 🤷‍♀️');
+                return;
+            }
+            
+            // ยืนยันก่อนลบ
+            if (confirm('คุณต้องการลบรายการทั้งหมดใช่หรือไม่? 🗑️')) {
+                showEmptyMessage();
+            }
+        }
+        
+        // ฟังก์ชัน: แสดงข้อความว่าง
+        function showEmptyMessage() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '<li class="empty-message">ยังไม่มีรายการ<br>เริ่มเพิ่มรายการของคุณเลย!</li>';
+        }
+        
+        // ฟีเจอร์: กด Enter เพื่อเพิ่ม Todo
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+        
+        // แสดงข้อความว่างตอนเริ่มต้น
+        showEmptyMessage();
+    </script>
 </body>
 
 </html>

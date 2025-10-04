@@ -1,84 +1,405 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta>
+    <meta charset="UTF-8">
     <title>JS - Exercise</title>
     <style>
-        table {
-            border-collapse: collapse;
-            width: 400px;
-            /* Fixed table width */
-            table-layout: fixed;
-            /* Important: forces fixed column width */
+        /* สไตล์พื้นฐาน */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffc2e0 0%, #ffd6f0 50%, #e8d5ff 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        th,
-        td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
+        /* ดอกไม้ตกแต่ง */
+        body::before,
+        body::after {
+            content: '🌸';
+            position: fixed;
+            font-size: 100px;
+            opacity: 0.15;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::before {
+            top: 10%;
+            left: -20px;
+        }
+
+        body::after {
+            content: '🌺';
+            bottom: 10%;
+            right: -20px;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* พื้นหลังส่วนเนื้อหา */
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255,182,217,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ไอคอนตกแต่งมุมบน */
+        .content::before {
+            content: '✨';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ปุ่ม Back */
+        .back-btn {
+            background: #ff9ec9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #ff85bb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,158,201,0.3);
+        }
+
+        /* หัวข้อ */
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #ff9ec9;
+            padding-bottom: 10px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        h1::before {
+            content: '💖';
+            position: absolute;
+            left: 0;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #ff9ec9;
+            margin-top: 30px;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        h2::before {
+            content: '🌷';
+            position: absolute;
+            left: 0;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #555;
+        }
+
+        /* รูปภาพ */
+        img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* รายการ */
+        ul {
+            background: #fff0f8;
+            padding: 20px 40px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9ec9;
+        }
+
+        li {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        /* ส่วน Input และปุ่ม */
+        .input-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff0f8;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 2px dashed #ffc2e0;
+            position: relative;
+        }
+
+        .input-section::after {
+            content: '🎀';
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            font-size: 30px;
+        }
+
+        /* ช่อง Input */
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ffc2e0;
+            border-radius: 8px;
+            font-size: 16px;
+            flex: 1;
+            min-width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff9ec9;
+            box-shadow: 0 0 0 3px rgba(255,158,201,0.2);
+        }
+
+        /* ปุ่มต่างๆ */
+        input[type="button"] {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        /* ปุ่ม Add */
+        #btnAdd {
+            background: #ff9ec9;
+            color: white;
+        }
+
+        #btnAdd:hover {
+            background: #ff85bb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,158,201,0.4);
+        }
+
+        /* ปุ่ม Clear Inputs */
+        #btnClearInputs {
+            background: #ffb8e0;
+            color: white;
+        }
+
+        #btnClearInputs:hover {
+            background: #ffa3d5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,184,224,0.4);
+        }
+
+        /* ปุ่ม Reset Table */
+        #btnResetTable {
+            background: #d5a8ff;
+            color: white;
+        }
+
+        #btnResetTable:hover {
+            background: #c58fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(213,168,255,0.4);
+        }
+
+        /* ตาราง */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
             overflow: hidden;
-            /* Hide overflow text */
-            text-overflow: ellipsis;
-            /* Add "..." when text too long */
-            white-space: nowrap;
-            /* Prevent line break */
+            position: relative;
+        }
+
+        table::before {
+            content: '🦋';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 25px;
+            z-index: 10;
+            opacity: 0.7;
+        }
+
+        /* หัวตาราง */
+        thead {
+            background: linear-gradient(135deg, #ff9ec9 0%, #ffc2e0 100%);
+            color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        thead td {
+            font-weight: bold;
+            font-size: 16px;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* แถวตาราง */
+        tbody tr {
+            transition: background-color 0.3s;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fff5fb;
+        }
+
+        tbody tr:hover {
+            background-color: #ffe5f4;
+        }
+
+        /* ข้อความว่างในตาราง */
+        .empty-message {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
         }
     </style>
 </head>
 
 <body>
+    <div class="content">
+        <button class="back-btn" onclick="window.history.back();">Back</button>
+        <h1>Exercise</h1>
 
-    <button onclick="window.history.back();">Back</button>
-    <h1>Exercise</h1>
+        <h3>Create an UI with functions as below</h3>
 
-    <h3>Create an UI with functions as below
-    </h3>
-    <img src="./../images/exercise_01.png">
-    </p>
-    <ul>
-        <li>'Add': to add new input first name and last name as new record in table
-        </li>
-        <li>'Reset input': to clear values in 2 input texts
-        </li>
-        <li>'Reset table': to clear data rows in table
-        </li>
-    </ul>
+        <ul>
+            <li>'Add': to add new input first name and last name as new record in table</li>
+            <li>'Reset input': to clear values in 2 input texts</li>
+            <li>'Reset table': to clear data rows in table</li>
+        </ul>
 
-    </p>
+        <h2>Your solution for exercise</h2>
 
-    <h2>Your solution for exercise</h2>
+        <div class="input-section">
+            <input id="txtFirstname" type="text" placeholder="Enter First name">
+            <input id="txtLastname" type="text" placeholder="Enter Last name">
+            <input id="btnAdd" type="button" value="Add">
+            <input id="btnClearInputs" type="button" value="Reset Input">
+            <input id="btnResetTable" type="button" value="Reset Table">
+        </div>
 
-    <input id="txtFirstname" type="text" placeholder="Enter First name">
-    <input id="txtLastname" type="text" placeholder="Enter Last name">
+        <table>
+            <thead>
+                <tr>
+                    <td>First name</td>
+                    <td>Last name</td>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td>John</td>
+                    <td>Smith</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <input id="btnAdd" type="button" value="Add">
-    <input id="btnClearInputs" type="button" value="Clear" onclick="clearInputs();">
-
-    <table>
-        <thead>
-            <tr>
-                <td>
-                    First name
-                </td>
-                <td>
-                    Last name 
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    John
-                </td>
-                <td>
-                    Smith
-                </td>
-            </tr>
-        </tbody>
-    </table>
-   
+    <script>
+        // ฟังก์ชัน: เพิ่มข้อมูลลงในตาราง
+        function addName() {
+            // ดึงค่าจากช่อง input
+            const firstname = document.getElementById('txtFirstname').value.trim();
+            const lastname = document.getElementById('txtLastname').value.trim();
+            
+            // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
+            if (firstname === '' || lastname === '') {
+                alert('กรุณากรอกชื่อและนามสกุลให้ครบถ้วน');
+                return;
+            }
+            
+            // หา tbody ของตาราง
+            const tbody = document.getElementById('tableBody');
+            
+            // สร้างแถวใหม่ (tr)
+            const newRow = document.createElement('tr');
+            
+            // สร้างเซลล์สำหรับชื่อ (td)
+            const firstnameCell = document.createElement('td');
+            firstnameCell.textContent = firstname;
+            
+            // สร้างเซลล์สำหรับนามสกุล (td)
+            const lastnameCell = document.createElement('td');
+            lastnameCell.textContent = lastname;
+            
+            // ใส่เซลล์ทั้งสองเข้าไปในแถว
+            newRow.appendChild(firstnameCell);
+            newRow.appendChild(lastnameCell);
+            
+            // ใส่แถวใหม่เข้าไปในตาราง
+            tbody.appendChild(newRow);
+            
+            // ล้างข้อมูลในช่อง input หลังจากเพิ่มเสร็จ
+            clearInputs();
+        }
+        
+        // ฟังก์ชัน: ล้างข้อมูลในช่อง input
+        function clearInputs() {
+            document.getElementById('txtFirstname').value = '';
+            document.getElementById('txtLastname').value = '';
+            // โฟกัสกลับไปที่ช่องชื่อ
+            document.getElementById('txtFirstname').focus();
+        }
+        
+        // ฟังก์ชัน: ล้างข้อมูลทั้งหมดในตาราง
+        function resetTable() {
+            // ยืนยันก่อนลบ
+            if (confirm('คุณต้องการลบข้อมูลทั้งหมดในตารางใช่หรือไม่?')) {
+                const tbody = document.getElementById('tableBody');
+                // ลบทุกแถวใน tbody
+                tbody.innerHTML = '';
+            }
+        }
+        
+        // ผูกฟังก์ชันเข้ากับปุ่ม
+        document.getElementById('btnAdd').onclick = addName;
+        document.getElementById('btnClearInputs').onclick = clearInputs;
+        document.getElementById('btnResetTable').onclick = resetTable;
+        
+        // เพิ่มฟีเจอร์: กด Enter ในช่อง input เพื่อเพิ่มข้อมูล
+        document.getElementById('txtFirstname').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addName();
+        });
+        
+        document.getElementById('txtLastname').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addName();
+        });
+    </script>
 </body>
-
 </html>
