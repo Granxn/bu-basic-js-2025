@@ -215,6 +215,28 @@
             min-height: 200px;
             border: 2px solid #ffc2e0;
             position: relative;
+            overflow: hidden;
+        }
+        
+        /* Spotlight effect สำหรับ container */
+        .todo-container::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 158, 201, 0.3) 0%, transparent 70%);
+            pointer-events: none;
+            left: var(--mouse-x, -150px);
+            top: var(--mouse-y, -150px);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .todo-container:hover::after {
+            opacity: 1;
         }
 
         .todo-container::before {
@@ -230,6 +252,8 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
+            position: relative;
+            z-index: 2;
         }
 
         #todoList li {
@@ -244,11 +268,35 @@
             transition: all 0.3s;
             border: 2px solid #ffe5f4;
             box-shadow: 0 2px 4px rgba(255,158,201,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Spotlight effect สำหรับแต่ละ todo item */
+        #todoList li::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 194, 224, 0.4) 0%, transparent 70%);
+            pointer-events: none;
+            left: var(--mouse-x, -100px);
+            top: var(--mouse-y, -100px);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 0;
+        }
+        
+        #todoList li:hover::before {
+            opacity: 1;
         }
 
         #todoList li:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(255,158,201,0.2);
+            box-shadow: 0 4px 12px rgba(255,158,201,0.3);
+            border-color: #ff9ec9;
         }
 
         /* Checkbox */
@@ -257,6 +305,8 @@
             height: 20px;
             cursor: pointer;
             accent-color: #ff9ec9;
+            position: relative;
+            z-index: 1;
         }
 
         /* ข้อความที่ทำเสร็จ */
@@ -269,6 +319,8 @@
         .todo-text {
             flex: 1;
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         /* ข้อความว่าง */
@@ -363,6 +415,9 @@
             // ใส่ li เข้าไปใน ul
             todoList.appendChild(li);
             
+            // เพิ่ม Spotlight Effect ให้ item ใหม่
+            addSpotlightToItem(li);
+            
             // ล้างช่อง input
             input.value = '';
             input.focus();
@@ -412,6 +467,29 @@
         
         // แสดงข้อความว่างตอนเริ่มต้น
         showEmptyMessage();
+        
+        // เพิ่ม Spotlight Effect สำหรับ todo container
+        const todoContainer = document.querySelector('.todo-container');
+        todoContainer.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            this.style.setProperty('--mouse-x', `${x}px`);
+            this.style.setProperty('--mouse-y', `${y}px`);
+        });
+        
+        // ฟังก์ชันเพิ่ม Spotlight Effect ให้แต่ละ todo item
+        function addSpotlightToItem(item) {
+            item.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                this.style.setProperty('--mouse-x', `${x}px`);
+                this.style.setProperty('--mouse-y', `${y}px`);
+            });
+        }
     </script>
 </body>
 
